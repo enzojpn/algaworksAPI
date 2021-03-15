@@ -12,9 +12,5 @@ public class AlgaworksApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AlgaworksApiApplication.class, args);
-	}
-	@GetMapping("/hello")
-	public String hello(@RequestParam(value = "name", defaultValue = "WORLD") String name) {
-		return String.format("HELLO %s!!", name);
-	}
+	} 
 }
