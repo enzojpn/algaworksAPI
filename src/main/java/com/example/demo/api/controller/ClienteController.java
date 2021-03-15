@@ -2,34 +2,52 @@ package com.example.demo.api.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.domain.model.Cliente;
+import com.example.demo.domain.repository.ClienteRepository;
 
 @RestController
+@RequestMapping("/clientes")
 public class ClienteController {
 
-	@GetMapping("/clientes")
-	public List<Cliente> listar(){
+	@Autowired
+	private ClienteRepository clienteRepository;
 
-		Cliente c1 = new Cliente();
-		c1.setId(1L);
-		c1.setNome("Joao");
-		c1.setEmail("email@set.com");
-		c1.setTelefone("(11) 4424-5255");
-		
-
-		Cliente c2 = new Cliente();
-		c2.setId(1L);
-		c2.setNome("ana");
-		c2.setEmail("ana@ft.com");
-		c2.setTelefone("(11) 3435-7895");
-		
-		
-		
-		return Arrays.asList(c1, c2);
+	@GetMapping
+	public List<Cliente> listar() {
+		return clienteRepository.findAll();
 	}
-	
+
+	@GetMapping("/{clienteId}")
+	public ResponseEntity<Cliente> buscar(@PathVariable Long clienteId) {
+		Optional<Cliente> cliente = clienteRepository.findById(clienteId);
+		if (cliente.isPresent()) {
+			return ResponseEntity.ok(cliente.get());
+		}
+
+		return ResponseEntity.notFound().build();
+
+	}
+
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public Cliente gravar(@RequestBody Cliente cliente) {
+		return clienteRepository.save(cliente);
+	}
+
 }
